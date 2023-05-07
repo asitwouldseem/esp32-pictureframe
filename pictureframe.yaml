@@ -1,0 +1,68 @@
+esphome:
+  name: esphome-web-1b0c70
+  friendly_name: pictureframe1
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: ""
+
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Load typeface
+# Not sure about the licensing here... https://moorstation.org/typoasis/designers/casady_greene/index.htm
+font:
+  - file: "chicago.ttf"
+    id: chicago
+    size: 55
+
+sensor:
+  - platform: homeassistant
+    entity_id: weather.brisbane_hourly
+    attribute: temperature
+    id: weather_temperature
+
+    ## // TODO
+    ## CHOSEN PAGE FROM INPUT_SELECT
+
+# Waveshare ePaper Display
+spi:
+  clk_pin: 13
+  mosi_pin: 14
+
+## // TODO
+## SELECT PAGE TO DRAW BASED ON SENSOR
+
+display:
+  - platform: waveshare_epaper
+    id: eink_display
+    cs_pin: 15
+    dc_pin: 27
+    busy_pin: 25
+    reset_pin: 26
+    reset_duration: 2ms
+    model: 7.50inv2
+    update_interval: 300s
+    rotation: 90°
+    pages:
+      - id: dash
+        lambda: |-
+          it.printf(25, 150, id(chicago), "%.1f°C", id(weather_temperature).state);
+      - id: art1
+        lambda: |-
+          it.print(5, 15, id(chicago), "This is art 1!");
+      - id: art2
+        lambda: |-
+          it.print(5, 15, id(chicago), "This is art 2!");
